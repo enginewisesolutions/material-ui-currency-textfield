@@ -1,11 +1,11 @@
 import React from "react"
 import PropTypes from "prop-types"
-import AutoNumeric from "autonumeric"
-import { withStyles } from "@material-ui/styles"
+// import AutoNumeric from 'autonumeric';
+import { withStyles } from "@material-ui/core/styles"
 import { TextField, InputAdornment } from "@material-ui/core"
 
-const styles = theme => ({
-  textField: props => ({
+const styles = (theme) => ({
+  textField: (props) => ({
     textAlign: props.textAlign || "right",
   }),
 })
@@ -33,23 +33,20 @@ class CurrencyTextField extends React.Component {
 
   componentDidMount() {
     const { currencySymbol, ...others } = this.props
-    this.autonumeric = new AutoNumeric(this.input, this.props.value, {
-      ...this.props.preDefined,
-      ...others,
-      onChange: undefined,
-      onFocus: undefined,
-      onBlur: undefined,
-      onKeyPress: undefined,
-      onKeyUp: undefined,
-      onKeyDown: undefined,
-      watchExternalChanges: false,
-    })
-  }
-  componentWillUnmount() {
-    this.autonumeric.remove()
+    // this.autonumeric = new AutoNumeric(this.input, this.props.value, {
+    // 	...this.props.preDefined,
+    // 	...others,
+    // 	onChange: undefined,
+    // 	onFocus: undefined,
+    // 	onBlur: undefined,
+    // 	onKeyPress: undefined,
+    // 	onKeyUp: undefined,
+    // 	onKeyDown: undefined,
+    // 	watchExternalChanges: false
+    // });
   }
 
-  componentWillReceiveProps(newProps) {
+  UNSAFE_componentWillReceiveProps(newProps) {
     const isValueChanged =
       this.props.value !== newProps.value && this.getValue() !== newProps.value
 
@@ -58,28 +55,29 @@ class CurrencyTextField extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    this.autonumeric.remove()
+  }
+
   getValue() {
     if (!this.autonumeric) return
     const valueMapper = {
-      string: numeric => numeric.getNumericString(),
-      number: numeric => numeric.getNumber(),
+      string: (numeric) => numeric.getNumericString(),
+      number: (numeric) => numeric.getNumber(),
     }
-    return valueMapper[this.props.outputFormat](this.autonumeric)
+    // return valueMapper[this.props.outputFormat](this.autonumeric);
   }
+
   callEventHandler(event, eventName) {
     if (!this.props[eventName]) return
     this.props[eventName](event, this.getValue())
   }
+
   render() {
-    const {
-      classes,
-      currencySymbol,
-      inputProps,
-      InputProps,
-      ...others
-    } = this.props
+    const { classes, currencySymbol, inputProps, InputProps } = this.props
 
     const otherProps = {}
+
     ;[
       "id",
       "label",
@@ -106,27 +104,32 @@ class CurrencyTextField extends React.Component {
       "size",
       "FormHelperTextProps",
       "placeholder",
-    ].forEach(prop => (otherProps[prop] = this.props[prop]))
+      "InputLabelProps",
+    ].forEach((prop) => {
+      otherProps[prop] = this.props[prop]
+    })
 
     return (
       <TextField
-        inputRef={ref => (this.input = ref)}
-        onChange={e => this.callEventHandler(e, "onChange")}
-        onFocus={e => this.callEventHandler(e, "onFocus")}
-        onBlur={e => this.callEventHandler(e, "onBlur")}
-        onKeyPress={e => this.callEventHandler(e, "onKeyPress")}
-        onKeyUp={e => this.callEventHandler(e, "onKeyUp")}
-        onKeyDown={e => this.callEventHandler(e, "onKeyDown")}
+        inputRef={(ref) => {
+          this.input = ref
+        }}
+        onChange={(e) => this.callEventHandler(e, "onChange")}
+        onFocus={(e) => this.callEventHandler(e, "onFocus")}
+        onBlur={(e) => this.callEventHandler(e, "onBlur")}
+        onKeyPress={(e) => this.callEventHandler(e, "onKeyPress")}
+        onKeyUp={(e) => this.callEventHandler(e, "onKeyUp")}
+        onKeyDown={(e) => this.callEventHandler(e, "onKeyDown")}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">{currencySymbol}</InputAdornment>
           ),
           ...InputProps,
         }}
-        inputProps={{
-          className: classes.textField,
-          ...inputProps,
-        }}
+        // inputProps={{
+        // 	className: classes.textField,
+        // 	...inputProps
+        // }}
         {...otherProps}
       />
     )
@@ -179,13 +182,13 @@ CurrencyTextField.propTypes = {
   decimalCharacterAlternative: PropTypes.string,
   /** Defines the default number of decimal places to show on the formatted value. */
   decimalPlaces: PropTypes.number,
-  /** Defines how many decimal places should be visible when the element is unfocused null. */
+  /** Defines how many decimal places should be visible when the element is unfocused null. */
   decimalPlacesShownOnBlur: PropTypes.number,
   /** Defines how many decimal places should be visible when the element has the focus. */
   decimalPlacesShownOnFocus: PropTypes.number,
   /** Defines the thousand grouping separator character */
   digitGroupSeparator: PropTypes.string,
-  /** Controls the leading zero behavior   */
+  /** Controls the leading zero behavior   */
   leadingZero: PropTypes.oneOf(["allow", "deny", "keep"]),
   /** maximum value that can be enter */
   maximumValue: PropTypes.string,
@@ -193,7 +196,7 @@ CurrencyTextField.propTypes = {
   minimumValue: PropTypes.string,
   /** placement of the negitive and possitive sign symbols */
   negativePositiveSignPlacement: PropTypes.oneOf(["l", "r", "p", "s"]),
-  /** Defines the negative sign symbol to use   */
+  /** Defines the negative sign symbol to use   */
   negativeSignCharacter: PropTypes.string,
   /** how the value should be formatted,before storing it */
   outputFormat: PropTypes.oneOf(["string", "number"]),
@@ -201,9 +204,9 @@ CurrencyTextField.propTypes = {
   selectOnFocus: PropTypes.bool,
   /** Defines the positive sign symbol to use. */
   positiveSignCharacter: PropTypes.string,
-  /** Defines if the element should be set as read only on initialization. */
+  /** Defines if the element should be set as read only on initialization. */
   readOnly: PropTypes.bool,
-  /** predefined objects are available in <a href="https://www.nodenpm.com/autonumeric/4.5.1/detail.html#predefined-options">AutoNumeric</a>*/
+  /** predefined objects are available in <a href="https://www.nodenpm.com/autonumeric/4.5.1/detail.html#predefined-options">AutoNumeric</a> */
   preDefined: PropTypes.object,
 }
 
@@ -218,4 +221,4 @@ CurrencyTextField.defaultProps = {
 }
 export default withStyles(styles)(CurrencyTextField)
 
-export const predefinedOptions = AutoNumeric.getPredefinedOptions()
+// export const predefinedOptions = AutoNumeric.getPredefinedOptions();
